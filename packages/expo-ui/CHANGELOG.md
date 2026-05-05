@@ -33,6 +33,7 @@
 ### 🐛 Bug fixes
 
 - [iOS] Fix SwiftUI `aspectRatio` modifier to allow omitting `ratio` and use the content's intrinsic aspect ratio. ([#45232](https://github.com/expo/expo/pull/45232) by [@2hwayoung](https://github.com/2hwayoung))
+- Fixed dynamic sizing regression for `@expo/ui/community/bottom-sheet`. ([#45412](https://github.com/expo/expo/pull/45412) by [@kudo](https://github.com/kudo))
 
 ### 🎉 New features
 
