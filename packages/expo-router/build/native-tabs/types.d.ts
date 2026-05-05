@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import type { ColorValue, ImageSourcePropType, StyleProp, TextStyle, ViewStyle } from 'react-native';
-import type { TabsScreenProps } from 'react-native-screens';
+import type { TabsHostProps, TabsScreenProps } from 'react-native-screens';
 import type { SFSymbol } from 'sf-symbols-typescript';
 import type { DefaultRouterOptions, EventMapBase, NavigationState, ParamListBase, RouteProp, ScreenListeners, TabNavigationState } from '../react-navigation/native';
 /**
@@ -16,6 +16,13 @@ export type NativeTabNavigationEventMap = {
     };
 };
 export type NativeScreenProps = Partial<Omit<TabsScreenProps, 'screenKey'>>;
+/**
+ * Props passed to the underlying tab host implementation in `react-native-screens`.
+ *
+ * Excludes props that Expo Router fully controls and that would break navigation if overridden:
+ * `navState`, `onTabSelected`, and `children`.
+ */
+export type NativeTabsHostNativeProps = Partial<Omit<TabsHostProps, 'navState' | 'onTabSelected' | 'children'>>;
 export interface NativeTabOptions extends DefaultRouterOptions {
     icon?: SymbolOrImageSource;
     selectedIcon?: SymbolOrImageSource;
@@ -237,6 +244,20 @@ export interface NativeTabsProps extends PropsWithChildren {
     screenListeners?: ScreenListeners<TabNavigationState<ParamListBase>, NativeTabNavigationEventMap> | ((prop: {
         route: RouteProp<ParamListBase, string>;
     }) => ScreenListeners<TabNavigationState<ParamListBase>, NativeTabNavigationEventMap>);
+    /**
+     * Props passed to the underlying native tab host implementation in `react-native-screens`.
+     * Use this to configure props that are not directly exposed by Expo Router.
+     *
+     * Props that drive navigation (`navState`, `onTabSelected`, `children`) are managed by Expo Router
+     * and cannot be overridden. Anything else passed here will override the matching Expo Router prop,
+     * which may lead to unexpected behavior.
+     *
+     * > **Note**: This is an unstable API and may change or be removed in minor versions.
+     *
+     * @platform android
+     * @platform ios
+     */
+    unstable_nativeProps?: NativeTabsHostNativeProps;
 }
 export interface InternalNativeTabsProps extends NativeTabsProps {
     nonTriggerChildren?: React.ReactNode;

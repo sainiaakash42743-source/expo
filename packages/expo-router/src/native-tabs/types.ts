@@ -6,7 +6,7 @@ import type {
   TextStyle,
   ViewStyle,
 } from 'react-native';
-import type { TabsScreenProps } from 'react-native-screens';
+import type { TabsHostProps, TabsScreenProps } from 'react-native-screens';
 import type { SFSymbol } from 'sf-symbols-typescript';
 
 import type {
@@ -28,6 +28,13 @@ export type NativeTabNavigationEventMap = {
 };
 
 export type NativeScreenProps = Partial<Omit<TabsScreenProps, 'screenKey'>>;
+
+/**
+ * Props passed to the underlying tab host implementation in `react-native-screens`.
+ */
+export type NativeTabsHostNativeProps = Partial<
+  Omit<TabsHostProps, 'navState' | 'onTabSelected' | 'children'>
+>;
 
 export interface NativeTabOptions extends DefaultRouterOptions {
   icon?: SymbolOrImageSource;
@@ -314,6 +321,33 @@ export interface NativeTabsProps extends PropsWithChildren {
     | ((prop: {
         route: RouteProp<ParamListBase, string>;
       }) => ScreenListeners<TabNavigationState<ParamListBase>, NativeTabNavigationEventMap>);
+  /**
+   * Props passed to the underlying native tab host implementation in `react-native-screens`.
+   * Use this to configure props that are not directly exposed by Expo Router.
+   *
+   * Props that drive navigation (`navState`, `onTabSelected`, `children`) are managed by
+   * Expo Router and cannot be overridden — they are excluded from the type.
+   *
+   * Other host props that Expo Router maps from its own API will be overridden by anything
+   * passed here:
+   *
+   * - `tabBarHidden` ← `hidden`
+   * - `ios.tabBarTintColor` ← `tintColor`
+   * - `ios.tabBarMinimizeBehavior` ← `minimizeBehavior`
+   * - `ios.tabBarControllerMode` ← `sidebarAdaptable`
+   * - `ios.bottomAccessory` ← `<NativeTabs.BottomAccessory>` children
+   *
+   * In particular, passing `ios.bottomAccessory` here disables `<NativeTabs.BottomAccessory>`
+   * children. A `__DEV__` warning is emitted when both are provided.
+   *
+   * > **Note**: This is an unstable API and may change or be removed in minor versions.
+   *
+   * > **Note**: Has no effect on web.
+   *
+   * @platform android
+   * @platform ios
+   */
+  unstable_nativeProps?: NativeTabsHostNativeProps;
 }
 
 export interface InternalNativeTabsProps extends NativeTabsProps {

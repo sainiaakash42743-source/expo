@@ -13,7 +13,8 @@ const bottomAccessory_1 = require("./utils/bottomAccessory");
 const optionsIconConverter_1 = require("./utils/optionsIconConverter");
 const children_1 = require("../utils/children");
 function NativeTabsView(props) {
-    const { minimizeBehavior, tabs, sidebarAdaptable, nonTriggerChildren } = props;
+    const { minimizeBehavior, tabs, sidebarAdaptable, nonTriggerChildren, unstable_nativeProps } = props;
+    const { ios: rawIosProps, android: _ignoredRawAndroidProps, ...rawHostRestProps } = unstable_nativeProps ?? {};
     const { selectedScreenKey, provenance } = (0, NativeTabsView_shared_1.useSelectedScreenKey)(props);
     const onTabSelected = (0, NativeTabsView_shared_1.useOnTabSelectedHandler)(props.onTabChange);
     const iosAppearances = tabs.map((tab) => ({
@@ -27,12 +28,13 @@ function NativeTabsView(props) {
         return null;
     }
     const tabBarControllerMode = sidebarAdaptable ? 'tabSidebar' : sidebarAdaptable === false ? 'tabBar' : 'automatic';
-    return ((0, jsx_runtime_1.jsx)(TabsHostWrapper, { navState: { selectedScreenKey, provenance }, ios: {
+    return ((0, jsx_runtime_1.jsx)(TabsHostWrapper, { ios: {
             tabBarTintColor: props.tintColor,
             tabBarMinimizeBehavior: minimizeBehavior,
             tabBarControllerMode,
             bottomAccessory: bottomAccessoryFn,
-        }, tabBarHidden: props.hidden, onTabSelected: onTabSelected, children: children }));
+            ...rawIosProps,
+        }, tabBarHidden: props.hidden, ...rawHostRestProps, navState: { selectedScreenKey, provenance }, onTabSelected: onTabSelected, children: children }));
 }
 function Screen(props) {
     const { options, standardAppearance, scrollEdgeAppearance, contentRenderer } = props;
